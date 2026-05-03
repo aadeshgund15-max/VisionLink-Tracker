@@ -13,19 +13,7 @@ import {
 import Image from "next/image";
 import { FormEvent, useMemo, useState } from "react";
 
-/**
- * SEO & Metadata Configuration
- * This tells Google exactly what your site is about.
- * The verification code from your Search Console is now included.
- */
-export const metadata = {
-  title: "VisionLink Tracker | AI Image Usage Search",
-  description: "Track image usage across the web with VisionLink. Built by Aadesh Gund using Google Lens technology.",
-  keywords: ["VisionLink", "Image Tracker", "Aadesh Gund", "Reverse Image Search", "SAKEC"],
-  verification: {
-    google: "ApyLmPbZeg9Yyqdbz88ETIwELLoG9gES_OBV1lz46zU",
-  },
-};
+
 
 type VerifyImageResponse = {
   imageUrl: string;
