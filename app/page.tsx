@@ -164,10 +164,7 @@ export default function Home() {
       </div>
 
       <footer className="mt-12 border-t border-slate-200 py-8 text-center text-sm text-slate-500">
-        <p>© 2026 VisionLink Tracker. Built by 
-          <a href="https://github.com/aadeshgund15-max" target="_blank" className="ml-1 font-medium text-sky-600 hover:underline">
-            Aadesh Gund
-          </a>
+        <p>© 2026 VisionLink Tracker. Built by | Aadesh Gund |
         </p>
       </footer>
     </main>
