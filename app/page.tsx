@@ -9,9 +9,23 @@ import {
   Loader2,
   Search,
   ShieldCheck,
-} from "lucide-react";        
+} from "lucide-react";         
 import Image from "next/image";
 import { FormEvent, useMemo, useState } from "react";
+
+/**
+ * SEO & Metadata Configuration
+ * This tells Google exactly what your site is about.
+ * The verification code from your Search Console is now included.
+ */
+export const metadata = {
+  title: "VisionLink Tracker | AI Image Usage Search",
+  description: "Track image usage across the web with VisionLink. Built by Aadesh Gund using Google Lens technology.",
+  keywords: ["VisionLink", "Image Tracker", "Aadesh Gund", "Reverse Image Search", "SAKEC"],
+  verification: {
+    google: "ApyLmPbZeg9Yyqdbz88ETIwELLoG9gES_OBV1lz46zU",
+  },
+};
 
 type VerifyImageResponse = {
   imageUrl: string;
@@ -31,7 +45,6 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
 
   const sourceCountLabel = useMemo(() => {
-    // Fixed: Added optional chaining to prevent crash if result is null
     if (!result || !result.sources) return "sources";
     return result.sources.length === 1 ? "source" : "sources";
   }, [result]);
@@ -58,9 +71,7 @@ export default function Home() {
     try {
       const response = await fetch("/api/verify-image", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ imageUrl: trimmedUrl }),
       });
 
@@ -82,8 +93,8 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen px-4 py-6 text-slate-900 sm:px-6 lg:px-8">
-      <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-6xl flex-col justify-center gap-8">
+    <main className="flex min-h-screen flex-col px-4 py-6 text-slate-900 sm:px-6 lg:px-8">
+      <div className="mx-auto flex min-h-[calc(100vh-8rem)] w-full max-w-6xl flex-col justify-center gap-8">
         <section className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div className="space-y-7">
             <div className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-white/80 px-3 py-1.5 text-sm font-medium text-sky-800 shadow-sm">
@@ -93,10 +104,10 @@ export default function Home() {
 
             <div className="space-y-4">
               <h1 className="max-w-xl text-4xl font-semibold tracking-normal text-slate-950 sm:text-5xl">
-                Image Usage Tracker
+                VisionLink Tracker
               </h1>
               <p className="max-w-2xl text-lg leading-8 text-slate-600">
-                Paste an image URL from Google, Pinterest, or any public image host
+                Paste an image URL from Google, Pinterest, or any public host
                 to estimate how often it appears across visual search results.
               </p>
             </div>
@@ -163,6 +174,14 @@ export default function Home() {
           />
         </section>
       </div>
+
+      <footer className="mt-12 border-t border-slate-200 py-8 text-center text-sm text-slate-500">
+        <p>© 2026 VisionLink Tracker. Built by 
+          <a href="https://github.com/aadeshgund15-max" target="_blank" className="ml-1 font-medium text-sky-600 hover:underline">
+            Aadesh Gund
+          </a>
+        </p>
+      </footer>
     </main>
   );
 }
@@ -180,7 +199,7 @@ function ResultsPanel({
 }) {
   if (!result && !isLoading) {
     return (
-      <section className="rounded-lg border border-slate-200 bg-white/86 p-6 shadow-soft backdrop-blur">
+      <section className="rounded-lg border border-slate-200 bg-white/80 p-6 shadow-soft backdrop-blur">
         <div className="flex min-h-[30rem] flex-col items-center justify-center rounded-md border border-dashed border-slate-300 bg-slate-50 px-6 text-center">
           <div className="mb-5 grid h-16 w-16 place-items-center rounded-full bg-sky-100 text-sky-700">
             <ImageIcon className="h-8 w-8" aria-hidden="true" />
@@ -195,6 +214,8 @@ function ResultsPanel({
     );
   }
 
+  const displayUrl = result?.imageUrl || imageUrl;
+
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-soft sm:p-5">
       <div className="grid gap-4 lg:grid-cols-[minmax(0,0.86fr)_minmax(0,1fr)]">
@@ -204,38 +225,31 @@ function ResultsPanel({
               <div className="absolute inset-0 grid place-items-center text-slate-500">
                 <Loader2 className="h-9 w-9 animate-spin" aria-hidden="true" />
               </div>
-            ) : (
-              /* Fixed: Prioritize pasted link for preview calibration and added unoptimized */
-              (result?.imageUrl || imageUrl) ? (
-                <div className="relative h-full w-full bg-slate-50 flex items-center justify-center">
-                  {imageUrl && !imageUrl.match(/\.(jpeg|jpg|gif|png|webp|avif)$/i) && !result?.imageUrl ? (
-                    <div className="flex flex-col items-center gap-3 p-6 text-center">
-                      <div className="p-3 bg-sky-100 rounded-full">
-                        <Link2 className="h-8 w-8 text-sky-600" />
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-sm font-semibold text-slate-900">Web Page Link</p>
-                        <p className="text-[10px] text-slate-500">Analyzer will extract image after you click Analyze</p>
-                      </div>
+            ) : displayUrl ? (
+              <div className="relative h-full w-full bg-slate-50 flex items-center justify-center">
+                {imageUrl && !imageUrl.match(/\.(jpeg|jpg|gif|png|webp|avif)$/i) && !result?.imageUrl ? (
+                  <div className="flex flex-col items-center gap-3 p-6 text-center">
+                    <div className="p-3 bg-sky-100 rounded-full">
+                      <Link2 className="h-8 w-8 text-sky-600" />
                     </div>
-                  ) : (
-                    <img
-                      src={imageUrl || result?.imageUrl || ""}
-                      alt="Analyzed image preview"
-                      className="h-full w-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = "https://placehold.co/600x400?text=Processing+Link...";
-                      }}
-                    />
-                  )}
-                </div>
-              ) : null
-            )}
+                    <p className="text-sm font-semibold text-slate-900">Web Page Link</p>
+                  </div>
+                ) : (
+                  <Image
+                    src={displayUrl}
+                    alt="Analyzed image preview"
+                    fill
+                    unoptimized 
+                    className="object-cover"
+                  />
+                )}
+              </div>
+            ) : null}
           </div>
         </div>
 
         <div className="flex min-w-0 flex-col gap-4">
-          <div className="rounded-md border border-slate-200 bg-slate-50 p-5">
+          <div className="rounded-md border border-emerald-100 bg-emerald-50/50 p-5">
             <div className="flex items-center gap-2 text-sm font-medium text-emerald-700">
               <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
               Analysis complete
@@ -252,8 +266,8 @@ function ResultsPanel({
           </div>
 
           <div className="min-h-0 rounded-md border border-slate-200">
-            <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+            <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 bg-slate-50/50">
+              <h2 className="text-xs font-bold uppercase tracking-widest text-slate-500">
                 Source URLs
               </h2>
               <Link2 className="h-4 w-4 text-slate-400" aria-hidden="true" />
@@ -262,27 +276,24 @@ function ResultsPanel({
               {isLoading ? (
                 <SourceSkeleton />
               ) : result?.sources?.length ? (
-                <ul className="space-y-2">
+                <ul className="space-y-1">
                   {result.sources.map((source, index) => (
                     <li key={`${source}-${index}`}>
                       <a
                         href={source}
                         target="_blank"
-                        rel="noreferrer"
-                        className="group flex min-w-0 items-center justify-between gap-3 rounded-md px-3 py-3 text-sm text-slate-700 transition hover:bg-sky-50 hover:text-sky-800"
+                        rel="noopener noreferrer"
+                        className="group flex min-w-0 items-center justify-between gap-3 rounded-md px-3 py-2 text-sm text-slate-700 transition hover:bg-sky-50 hover:text-sky-800"
                       >
                         <span className="truncate">{source}</span>
-                        <ArrowUpRight
-                          className="h-4 w-4 flex-none text-slate-400 transition group-hover:text-sky-700"
-                          aria-hidden="true"
-                        />
+                        <ArrowUpRight className="h-4 w-4 flex-none text-slate-400 transition group-hover:text-sky-700" />
                       </a>
                     </li>
                   ))}
                 </ul>
               ) : (
                 <p className="px-3 py-8 text-center text-sm text-slate-500">
-                  No source URLs were returned for this image.
+                  No source URLs discovered.
                 </p>
               )}
             </div>
@@ -297,7 +308,7 @@ function SourceSkeleton() {
   return (
     <div className="space-y-2 p-2">
       {[0, 1, 2, 3].map((item) => (
-        <div key={item} className="h-11 animate-pulse rounded-md bg-slate-100" />
+        <div key={item} className="h-10 animate-pulse rounded bg-slate-100" />
       ))}
     </div>
   );
